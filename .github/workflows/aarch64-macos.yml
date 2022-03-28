@@ -32,7 +32,7 @@ jobs:
       - name: Gluon Build and Package
         id: outputfile
         run: |
-          mvn -Pdesktop,mac gluonfx:build gluonfx:package
+          mvn gluonfx:build gluonfx:package
           echo ::set-output name=path::target/gluonfx/aarch64-darwin/HelloM1-1.0.0.pkg
 
       - name: Upload (pkg)
