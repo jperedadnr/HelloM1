@@ -2,7 +2,7 @@ name: MacOS M1
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
