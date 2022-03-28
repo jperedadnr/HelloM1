@@ -1,0 +1,42 @@
+name: MacOS
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    name: macOS on M1
+    runs-on: [self-hosted, macOS, ARM64]
+    defaults:
+      run:
+        shell: "/usr/bin/arch -arch arm64e /bin/bash -l {0}"
+    steps:
+      - name: Status
+        run: |
+          clang --version
+          uname -a
+
+      - uses: actions/checkout@v2
+
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          version: dev
+          java-version: '17'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Make staging directory
+        run: mkdir staging
+
+      - name: Gluon Build and Package
+        id: outputfile
+        run: |
+          mvn -Pdesktop,mac gluonfx:build gluonfx:package
+          echo ::set-output name=path::target/gluonfx/aarch64-darwin/HelloM1-1.0.0.pkg
+
+      - name: Upload (pkg)
+        uses: actions/upload-artifact@v2
+        with:
+          name: Package
+          path: ${{ steps.outputfile.outputs.path }}
